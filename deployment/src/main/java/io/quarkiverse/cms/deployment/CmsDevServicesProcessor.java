@@ -13,6 +13,7 @@ import io.quarkus.deployment.builditem.FeatureBuildItem;
 public class CmsDevServicesProcessor {
 
     @BuildStep(onlyIf = IsDevelopment.class)
+    @Produce(FeatureBuildItem.class)
     void devServicesPlaceholder() {
         // TODO Phase 0: DevServicesResultBuildItem for Postgres
         // TODO Phase 2: CardPageBuildItem for the Dev UI
