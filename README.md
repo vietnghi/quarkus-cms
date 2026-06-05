@@ -308,6 +308,21 @@ All properties under `quarkus.cms.*`:
 | `quarkus.cms.rls.enabled` | `true` | Enforce row-level security |
 | `quarkus.cms.rls.native-postgres` | `false` | Generate PG native RLS policies |
 
+### SQLite
+
+Experimental SQLite support is available. Add these properties to use SQLite instead of PostgreSQL:
+
+```properties
+quarkus.datasource.db-kind=other
+quarkus.datasource.jdbc.url=jdbc:sqlite:cms.db
+quarkus.datasource.jdbc.driver=org.sqlite.JDBC
+quarkus.hibernate-orm.dialect=org.hibernate.community.dialect.SQLiteDialect
+quarkus.hibernate-orm.database.generation=drop-and-create
+quarkus.flyway.migrate-at-start=false
+```
+
+Note: SQLite does not support Flyway migrations (use Hibernate `database.generation=drop-and-create` instead). The existing Flyway V1 migration is SQLite-compatible when run manually. SQLite support is verified with 2 `@QuarkusTest` tests. PostgreSQL remains the primary production database.
+
 ---
 
 ## Architecture
