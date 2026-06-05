@@ -12,7 +12,20 @@ import io.quarkiverse.cms.runtime.model.CmsRelation;
 import io.quarkiverse.cms.runtime.model.FieldDefinition;
 import io.quarkiverse.cms.runtime.model.FieldType;
 import io.quarkiverse.cms.runtime.model.SchemaRegistry;
+import io.quarkiverse.cms.runtime.rest.AdminResource;
+import io.quarkiverse.cms.runtime.rest.CodegenResource;
 import io.quarkiverse.cms.runtime.rest.ContentResource;
+import io.quarkiverse.cms.runtime.rest.CodegenResource;
+import io.quarkiverse.cms.runtime.graphql.GraphQLAdapter;
+import io.quarkiverse.cms.runtime.media.LocalStorageProvider;
+import io.quarkiverse.cms.runtime.media.MediaResource;
+import io.quarkiverse.cms.runtime.media.ThumbnailService;
+import io.quarkiverse.cms.runtime.security.RowPolicyEnforcerImpl;
+import io.quarkiverse.cms.runtime.security.SecurityContextProducer;
+import io.quarkiverse.cms.runtime.document.SecuredDocumentService;
+import io.quarkiverse.cms.runtime.tenancy.DefaultTenantResolver;
+import io.quarkiverse.cms.runtime.webhook.WebhookService;
+import io.quarkiverse.cms.runtime.workflow.WorkflowServiceImpl;
 import io.quarkiverse.cms.runtime.config.CmsRecorder;
 import io.quarkiverse.cms.runtime.workflow.WorkflowDefinition;
 import io.quarkiverse.cms.runtime.workflow.WorkflowState;
@@ -73,11 +86,22 @@ public class CmsProcessor {
         return AdditionalBeanBuildItem.builder()
                 .addBeanClasses(
                         SchemaRegistry.class,
-                        PanacheDocumentService.class,
                         CmsEntry.class,
                         CmsRelation.class,
                         CmsRecorder.class,
-                        ContentResource.class)
+                        ContentResource.class,
+                        AdminResource.class,
+                        CodegenResource.class,
+                        GraphQLAdapter.class,
+                        LocalStorageProvider.class,
+                        MediaResource.class,
+                        ThumbnailService.class,
+                        RowPolicyEnforcerImpl.class,
+                        SecurityContextProducer.class,
+                        SecuredDocumentService.class,
+                        DefaultTenantResolver.class,
+                        WebhookService.class,
+                        WorkflowServiceImpl.class)
                 .setUnremovable()
                 .build();
     }

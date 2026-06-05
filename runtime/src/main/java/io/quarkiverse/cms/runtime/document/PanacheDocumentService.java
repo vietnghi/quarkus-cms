@@ -20,8 +20,6 @@ import io.quarkiverse.cms.runtime.model.CmsRelation;
 import io.quarkiverse.cms.runtime.model.SchemaRegistry;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 
-@ApplicationScoped
-@Transactional
 public class PanacheDocumentService implements DocumentService {
 
     private static final Logger LOG = Logger.getLogger(PanacheDocumentService.class);
