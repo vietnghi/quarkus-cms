@@ -15,7 +15,7 @@ import io.quarkiverse.cms.runtime.model.SchemaRegistry;
 import io.quarkiverse.cms.runtime.rest.AdminResource;
 import io.quarkiverse.cms.runtime.rest.CodegenResource;
 import io.quarkiverse.cms.runtime.rest.ContentResource;
-import io.quarkiverse.cms.runtime.rest.CodegenResource;
+import io.quarkiverse.cms.runtime.rest.PerTypeOpenApiFilter;
 import io.quarkiverse.cms.runtime.graphql.GraphQLAdapter;
 import io.quarkiverse.cms.runtime.media.LocalStorageProvider;
 import io.quarkiverse.cms.runtime.media.MediaResource;
@@ -48,9 +48,7 @@ public class CmsProcessor {
     private static final DotName CONTENT_TYPE = DotName.createSimple(ContentType.class.getName());
 
     @BuildStep
-    FeatureBuildItem feature() {
-        return new FeatureBuildItem(FEATURE);
-    }
+    FeatureBuildItem feature() { return new FeatureBuildItem(FEATURE); }
 
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
@@ -58,24 +56,17 @@ public class CmsProcessor {
         List<io.quarkiverse.cms.runtime.model.ContentType> types = new ArrayList<>();
         for (AnnotationInstance ann : index.getIndex().getAnnotations(CONTENT_TYPE)) {
             ClassInfo clazz = ann.target().asClass();
-            String className = clazz.name().toString();
-            String api = ann.value("api") != null ? ann.value("api").asString() : className;
+            String cn = clazz.name().toString();
+            String api = ann.value("api") != null ? ann.value("api").asString() : cn;
             String plural = ann.value("plural") != null ? ann.value("plural").asString() : api + "s";
-            AnnotationValue kindVal = ann.value("kind");
-            io.quarkiverse.cms.runtime.model.ContentType.Kind kind = kindVal != null
-                ? io.quarkiverse.cms.runtime.model.ContentType.Kind.valueOf(kindVal.asEnum())
+            var kind = ann.value("kind") != null
+                ? io.quarkiverse.cms.runtime.model.ContentType.Kind.valueOf(ann.value("kind").asEnum())
                 : io.quarkiverse.cms.runtime.model.ContentType.Kind.COLLECTION;
             boolean dap = ann.value("draftAndPublish") != null ? ann.value("draftAndPublish").asBoolean() : true;
-
-            // Discover fields from the Java class
             List<FieldDefinition> fields = new ArrayList<>();
-            for (FieldInfo fi : clazz.fields()) {
-                String fieldType = fi.type().name().toString();
-                io.quarkiverse.cms.runtime.model.FieldType ft = inferFieldType(fieldType);
-                fields.add(new FieldDefinition(fi.name(), ft, false, false, false, List.of(), null, null));
-            }
-
-            System.out.println("[quarkus-cms] registering " + className + " → api=" + api + " plural=" + plural + " kind=" + kind);
+            for (FieldInfo fi : clazz.fields())
+                fields.add(new FieldDefinition(fi.name(), inferFieldType(fi.type().name().toString()), false, false, false, List.of(), null, null));
+            System.out.println("[quarkus-cms] registering " + cn + " → api=" + api + " plural=" + plural);
             types.add(new io.quarkiverse.cms.runtime.model.ContentType(api, plural, kind, dap, fields));
         }
         recorder.registerContentTypes(types);
@@ -84,48 +75,25 @@ public class CmsProcessor {
     @BuildStep
     AdditionalBeanBuildItem beans() {
         return AdditionalBeanBuildItem.builder()
-                .addBeanClasses(
-                        SchemaRegistry.class,
-                        CmsEntry.class,
-                        CmsRelation.class,
-                        CmsRecorder.class,
-                        ContentResource.class,
-                        AdminResource.class,
-                        CodegenResource.class,
-                        GraphQLAdapter.class,
-                        LocalStorageProvider.class,
-                        MediaResource.class,
-                        ThumbnailService.class,
-                        RowPolicyEnforcerImpl.class,
-                        SecurityContextProducer.class,
-                        SecuredDocumentService.class,
-                        DefaultTenantResolver.class,
-                        WebhookService.class,
-                        WorkflowServiceImpl.class)
-                .setUnremovable()
-                .build();
+                .addBeanClasses(SchemaRegistry.class, CmsEntry.class, CmsRelation.class, CmsRecorder.class,
+                        ContentResource.class, AdminResource.class, CodegenResource.class, GraphQLAdapter.class,
+                        LocalStorageProvider.class, MediaResource.class, ThumbnailService.class,
+                        RowPolicyEnforcerImpl.class, SecurityContextProducer.class, SecuredDocumentService.class,
+                        DefaultTenantResolver.class, WebhookService.class, WorkflowServiceImpl.class)
+                .setUnremovable().build();
     }
 
     @BuildStep
     ReflectiveClassBuildItem reflection() {
-        return ReflectiveClassBuildItem.builder(
-                        Document.class,
-                        Query.class,
-                        FieldDefinition.class,
-                        WorkflowDefinition.class,
-                        WorkflowState.class)
-                .methods()
-                .fields()
-                .build();
+        return ReflectiveClassBuildItem.builder(Document.class, Query.class, FieldDefinition.class,
+                        WorkflowDefinition.class, WorkflowState.class).methods().fields().build();
     }
 
-    private FieldType inferFieldType(String javaType) {
-        return switch (javaType) {
+    private FieldType inferFieldType(String jt) {
+        return switch (jt) {
             case "java.lang.String" -> FieldType.TEXT;
-            case "int", "long", "double", "float", "java.lang.Integer",
-                 "java.lang.Long", "java.lang.Double", "java.lang.Float" ->
-                FieldType.NUMBER;
-            case "boolean", "java.lang.Boolean" -> FieldType.BOOLEAN;
+            case "int","long","double","float","java.lang.Integer","java.lang.Long","java.lang.Double","java.lang.Float" -> FieldType.NUMBER;
+            case "boolean","java.lang.Boolean" -> FieldType.BOOLEAN;
             default -> FieldType.STRING;
         };
     }
