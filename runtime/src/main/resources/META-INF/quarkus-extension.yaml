@@ -1,0 +1,15 @@
+name: "Quarkus CMS"
+artifact: "io.quarkiverse.cms:quarkus-cms"
+description: "A Strapi-inspired headless CMS delivered as a Quarkus extension: dynamic content types, auto REST + GraphQL APIs, media, RBAC."
+metadata:
+  keywords:
+    - "cms"
+    - "headless"
+    - "strapi"
+    - "content"
+  categories:
+    - "web"
+    - "data"
+  status:
+    - "experimental"
+  guide: "https://github.com/quarkiverse/quarkus-cms"
