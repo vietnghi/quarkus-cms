@@ -10,3 +10,5 @@ target/
 cms-uploads/
 admin-ui/dist/
 admin-ui/node_modules/
+admin-ui/dist/
+admin-ui/node_modules/
