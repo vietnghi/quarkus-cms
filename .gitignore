@@ -8,3 +8,5 @@ target/
 .vscode/
 .DS_Store
 cms-uploads/
+admin-ui/dist/
+admin-ui/node_modules/

@@ -13,6 +13,7 @@ import io.quarkiverse.cms.runtime.document.Document;
 import io.quarkiverse.cms.runtime.document.DocumentService;
 import io.quarkiverse.cms.runtime.document.Query;
 import io.quarkiverse.cms.runtime.model.CmsRelation;
+import io.quarkiverse.cms.runtime.model.FieldDefinition;
 import io.quarkiverse.cms.runtime.model.SchemaRegistry;
 
 @Path("/cms-admin/api")
@@ -81,5 +82,20 @@ public class AdminResource {
         return Response.status(201).entity(Map.of("id", r.id)).build();
     }
     @GET @Path("/relations") public List<CmsRelation> listRelations() { return CmsRelation.listAll(); }
+
+    // -- Type metadata for Refine SPA --
+    @GET @Path("/types")
+    public Response getTypes() {
+        return Response.ok(registry.all().stream().map(ct -> Map.of(
+            "apiName", ct.apiName(), "pluralName", ct.pluralName(),
+            "kind", ct.kind().name(), "draftAndPublish", ct.draftAndPublish(),
+            "fields", ct.fields().stream().map(f -> Map.of(
+                "name", f.name(), "type", f.type().name(),
+                "required", f.required(), "unique", f.unique(),
+                "localized", f.localized())
+            ).collect(Collectors.toList())
+        )).collect(Collectors.toList())).build();
+    }
+
     public record ContentTypeDto(String apiName, String pluralName, String kind, boolean dap, int fieldCount) {}
 }
