@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { LoginPage } from "./login";
 import { AdminLayout, ContentList } from "./layout";
 import { ContentForm } from "./content-form";
+import { MediaPage } from "./media";
 
 export const AppRoutes: React.FC = () => (
   <Routes>
@@ -12,6 +13,7 @@ export const AppRoutes: React.FC = () => (
       <Route path="content-manager/:plural" element={<ContentList />} />
       <Route path="content-manager/:plural/create" element={<ContentForm />} />
       <Route path="content-manager/:plural/edit/:id" element={<ContentForm />} />
+      <Route path="media" element={<MediaPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Route>
   </Routes>
@@ -21,5 +23,6 @@ const Dashboard: React.FC = () => (
   <div>
     <h1>Quarkus CMS Admin</h1>
     <p>Select a content type from the sidebar to view entries.</p>
+    <p style={{ marginTop: 16 }}><a href="/q/dev-ui">Open Quarkus Dev UI</a></p>
   </div>
 );

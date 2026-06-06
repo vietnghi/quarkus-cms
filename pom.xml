@@ -17,7 +17,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Quarkus 3.20 LTS -->
-        <quarkus.version>3.20.1</quarkus.version>
+        <quarkus.version>3.36.1</quarkus.version>
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
         <surefire-plugin.version>3.2.5</surefire-plugin.version>
         <hibernate-community-dialects.version>6.6.52.Final</hibernate-community-dialects.version>
