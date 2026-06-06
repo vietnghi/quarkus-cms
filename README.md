@@ -26,6 +26,7 @@ quarkus create app com.acme:my-cms
 - [Admin panel](#admin-panel)
 - [Security model](#security-model)
 - [Configuration](#configuration)
+- [OpenAPI / Swagger UI](#openapi--swagger-ui)
 - [Architecture](#architecture)
 - [Module layout](#module-layout)
 - [Building & testing](#building--testing)
@@ -325,6 +326,34 @@ Note: SQLite does not support Flyway migrations (use Hibernate `database.generat
 
 ---
 
+## OpenAPI / Swagger UI
+
+Every `@ContentType` class gets its own typed OpenAPI paths — **no generic `/api/{plural}` template**.
+The `PerTypeOpenApiFilter` reads the `SchemaRegistry` at runtime and contributes per-type paths
+with typed request/response schemas to the OpenAPI document.
+
+**Swagger UI** is available at `/q/swagger-ui` — you'll see concrete endpoints like
+`GET /api/articles`, `POST /api/articles`, `GET /api/articles/{id}`, etc., each with
+typed schemas reflecting the actual Java fields of each content type, plus the full
+set of Strapi-compatible query parameters.
+
+```bash
+curl http://localhost:8080/q/openapi | grep "/api/articles"
+```
+
+To inspect the raw OpenAPI document:
+
+```bash
+curl http://localhost:8080/q/openapi
+```
+
+Verified by `OpenAPITest` (2 `@QuarkusTest` tests) that assert per-type paths,
+operationIds (`listArticle`, `createArticle`, `getArticle`, `updateArticle`, `deleteArticle`),
+and typed component schemas exist for every registered content type. Registered via
+`mp.openapi.filter` in `application.properties`.
+
+---
+
 ## Architecture
 
 ```
@@ -393,13 +422,14 @@ quarkus-cms-parent/
 ./mvnw verify
 ```
 
-Runs 24 tests across 7 test classes in ~12 seconds:
+Runs 29 tests across 10 test classes in ~30 seconds:
 
 ```
 AdminApiTest:          5 ✅  CodegenTest:          2 ✅
 ContentApiTest:       12 ✅  MediaTest:            1 ✅
-RelationsTest:         2 ✅  SecurityTest:         1 ✅
-StorageProviderTest:   1 ✅
+OpenAPITest:           2 ✅  RelationsTest:         3 ✅
+SecurityTest:          1 ✅  SQLiteTest:            2 ✅
+StorageProviderTest:   1 ✅  NativeContentIT:       0 (native-only)
 ```
 
 ### Development mode
