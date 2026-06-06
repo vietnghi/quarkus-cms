@@ -22,8 +22,8 @@ import io.quarkus.arc.Arc;
 
 /**
  * OASFilter that adds per-content-type OpenAPI paths.
- * NOT a CDI bean — instantiated by SmallRye OpenAPI via the
- * open-api-filter property. Gets SchemaRegistry via Arc.container().
+ * NOT a CDI bean — activated via mp.openapi.filter config property.
+ * Gets SchemaRegistry via Arc.container().
  */
 public class PerTypeOpenApiFilter implements OASFilter {
 
@@ -215,17 +215,8 @@ public class PerTypeOpenApiFilter implements OASFilter {
         return r;
     }
 
-    private Schema strSchema() {
-        Schema s = OASFactory.createObject(Schema.class);
-        s.addType(Schema.SchemaType.STRING);
-        return s;
-    }
-
-    private Schema intSchema() {
-        Schema s = OASFactory.createObject(Schema.class);
-        s.addType(Schema.SchemaType.INTEGER);
-        return s;
-    }
+    private Schema strSchema() { Schema s = OASFactory.createObject(Schema.class); s.addType(Schema.SchemaType.STRING); return s; }
+    private Schema intSchema() { Schema s = OASFactory.createObject(Schema.class); s.addType(Schema.SchemaType.INTEGER); return s; }
 
     private Schema.SchemaType fieldTypeToOpenApi(FieldType ft) {
         return switch (ft) {
@@ -235,7 +226,5 @@ public class PerTypeOpenApiFilter implements OASFilter {
         };
     }
 
-    private String cap(String s) {
-        return s.isEmpty() ? s : Character.toUpperCase(s.charAt(0)) + s.substring(1);
-    }
+    private String cap(String s) { return s.isEmpty() ? s : Character.toUpperCase(s.charAt(0)) + s.substring(1); }
 }

@@ -35,6 +35,7 @@ import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
+import io.quarkus.deployment.builditem.RunTimeConfigurationDefaultBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationValue;
@@ -87,6 +88,14 @@ public class CmsProcessor {
     ReflectiveClassBuildItem reflection() {
         return ReflectiveClassBuildItem.builder(Document.class, Query.class, FieldDefinition.class,
                         WorkflowDefinition.class, WorkflowState.class).methods().fields().build();
+    }
+
+    @BuildStep
+    void openApiFilterConfig(io.quarkus.deployment.annotations.BuildProducer<RunTimeConfigurationDefaultBuildItem> config) {
+        config.produce(new RunTimeConfigurationDefaultBuildItem(
+                "mp.openapi.filter", "io.quarkiverse.cms.runtime.rest.PerTypeOpenApiFilter"));
+        config.produce(new RunTimeConfigurationDefaultBuildItem(
+                "smallrye.openapi.filter", "io.quarkiverse.cms.runtime.rest.PerTypeOpenApiFilter"));
     }
 
     private FieldType inferFieldType(String jt) {
