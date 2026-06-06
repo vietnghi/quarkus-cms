@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useList, useLogout } from "@refinedev/core";
 import { Outlet, Link, useLocation, useParams } from "react-router-dom";
+import { LocaleSwitch } from "./i18n";
 
 interface TypeMeta { apiName: string; pluralName: string; kind: string; draftAndPublish: boolean; fields: FieldMeta[]; }
 interface FieldMeta { name: string; type: string; required: boolean; unique: boolean; localized: boolean; }
@@ -16,19 +17,28 @@ export const AdminLayout: React.FC = () => {
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      <nav style={{ width: 220, background: "#1a1a2e", color: "white", padding: "12px 0" }}>
-        <div style={{ padding: "0 16px 16px", fontWeight: "bold", fontSize: 18, borderBottom: "1px solid #333" }}>Quarkus CMS</div>
-        {types.map(t => {
-          const active = location.pathname.includes(`/content-manager/${t.pluralName}`);
-          return (
-            <React.Fragment key={t.apiName}>
-              <Link to={`/content-manager/${t.pluralName}`} style={{ display: "block", padding: "8px 16px", color: active ? "white" : "#ccc", textDecoration: "none", background: active ? "#333" : "transparent" }}>{t.pluralName}</Link>
-              {active && <Link to={`/content-manager/${t.pluralName}/create`} style={{ display: "block", padding: "4px 24px", color: "#8cf", fontSize: 13, textDecoration: "none" }}>+ New {t.apiName}</Link>}
-            </React.Fragment>
-          );
-        })}
-        <div style={{ marginTop: 20, padding: "0 16px" }}>
-          <button onClick={() => logout()} style={{ background: "#c44", color: "white", border: "none", padding: "6px 12px", borderRadius: 4, cursor: "pointer" }}>Logout</button>
+      <nav style={{ width: 240, background: "#1a1a2e", color: "white", padding: "12px 0", display: "flex", flexDirection: "column" }}>
+        <div style={{ padding: "0 16px 16px", fontWeight: "bold", fontSize: 18, borderBottom: "1px solid #333" }}>
+          Quarkus CMS
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ padding: "12px 16px", fontSize: 11, textTransform: "uppercase", color: "#888" }}>Content Types</div>
+          {types.map(t => {
+            const active = location.pathname.includes(`/content-manager/${t.pluralName}`);
+            return (
+              <React.Fragment key={t.apiName}>
+                <Link to={`/content-manager/${t.pluralName}`} style={{ display: "block", padding: "6px 16px", color: active ? "white" : "#ccc", textDecoration: "none", background: active ? "#333" : "transparent", fontSize: 14 }}>{t.pluralName}</Link>
+                {active && <Link to={`/content-manager/${t.pluralName}/create`} style={{ display: "block", padding: "2px 24px", color: "#8cf", fontSize: 12, textDecoration: "none" }}>+ New {t.apiName}</Link>}
+              </React.Fragment>
+            );
+          })}
+          <div style={{ padding: "12px 16px", fontSize: 11, textTransform: "uppercase", color: "#888", marginTop: 12 }}>Admin</div>
+          <Link to="/media" style={navLink("/media", location)}>📁 Media Library</Link>
+          <Link to="/roles" style={navLink("/roles", location)}>🔐 Roles & Policies</Link>
+        </div>
+        <div style={{ padding: "12px 16px", borderTop: "1px solid #333", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <LocaleSwitch />
+          <button onClick={() => logout()} style={{ background: "#c44", color: "white", border: "none", padding: "4px 10px", borderRadius: 4, cursor: "pointer", fontSize: 12 }}>Logout</button>
         </div>
       </nav>
       <main style={{ flex: 1, padding: 24, background: "#f5f5f5" }}><Outlet /></main>
@@ -36,8 +46,14 @@ export const AdminLayout: React.FC = () => {
   );
 };
 
+function navLink(path: string, location: any): React.CSSProperties {
+  const active = location.pathname === path;
+  return { display: "block", padding: "6px 16px", color: active ? "white" : "#ccc", textDecoration: "none", background: active ? "#333" : "transparent", fontSize: 14 };
+}
+
 export const ContentList: React.FC = () => {
   const { plural = "articles" } = useParams<{ plural: string }>();
+
   const [meta, setMeta] = useState<TypeMeta | null>(null);
 
   useEffect(() => {
