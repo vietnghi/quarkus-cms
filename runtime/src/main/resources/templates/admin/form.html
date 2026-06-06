@@ -1,0 +1,38 @@
+{#include admin/layout currentType=plural}
+{#body}
+{#if type is null}
+<p>Type not found</p>
+{#else}
+<h2>{id ? 'Edit' : 'New'} {type.apiName}</h2>
+<form class="card" method="post" action="/cms-admin/content/{plural}{id ? '/' + id : ''}/save"
+      hx-post="/cms-admin/content/{plural}{id ? '/' + id : ''}/save"
+      hx-target="body" hx-swap="innerHTML">
+  {#for f in type.fields}
+  <div>
+    <label>{f.name}{f.required ? ' *' : ''}</label>
+    {#if f.type.name is 'TEXT' or f.type.name is 'STRING'}
+    <input type="text" name="{f.name}" value="{entry?.data?.get(f.name) ?: ''}" {f.required ? 'required' : ''}>
+    {#else if f.type.name is 'NUMBER'}
+    <input type="number" name="{f.name}" value="{entry?.data?.get(f.name) ?: ''}">
+    {#else if f.type.name is 'BOOLEAN'}
+    <input type="checkbox" name="{f.name}" value="true" {entry?.data?.get(f.name) ? 'checked' : ''}>
+    {#else if f.type.name is 'RICHTEXT'}
+    <textarea name="{f.name}" rows="5">{entry?.data?.get(f.name) ?: ''}</textarea>
+    {#else}
+    <input type="text" name="{f.name}" value="{entry?.data?.get(f.name) ?: ''}">
+    {/if}
+  </div>
+  {/for}
+  {#if type.draftAndPublish}
+  <div><label>Status</label>
+    <select name="status"><option value="draft">Draft</option><option value="published">Published</option></select>
+  </div>
+  {/if}
+  <div style="display:flex;gap:8px;margin-top:16px">
+    <button type="submit" class="btn btn-primary">{id ? 'Update' : 'Create'}</button>
+    <a href="/cms-admin/content/{plural}" class="btn" style="background:#ccc">Cancel</a>
+  </div>
+</form>
+{/if}
+{/body}
+{/include}

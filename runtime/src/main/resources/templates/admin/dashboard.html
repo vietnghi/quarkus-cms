@@ -1,0 +1,21 @@
+{#include admin/layout currentType=''}
+{#body}
+<h1>Quarkus CMS Admin Dashboard</h1>
+<div class="card">
+  <h2>Registered Content Types</h2>
+  <table>
+    <tr><th>API Name</th><th>Plural</th><th>Kind</th><th>Fields</th><th>Actions</th></tr>
+    {#for ct in types}
+    <tr>
+      <td><strong>{ct.apiName}</strong></td>
+      <td>{ct.pluralName}</td>
+      <td>{ct.kind}</td>
+      <td>{ct.fields.size}</td>
+      <td><a href="/cms-admin/content/{ct.pluralName}" class="btn btn-primary btn-sm">Manage</a></td>
+    </tr>
+    {/for}
+  </table>
+</div>
+<p><a href="/q/swagger-ui">Swagger UI</a> · <a href="/q/dev-ui">Dev UI</a></p>
+{/body}
+{/include}

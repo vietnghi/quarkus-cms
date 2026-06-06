@@ -1,0 +1,11 @@
+{#include admin/layout currentType=plural}
+{#body}
+{#if type is null}<p>Type not found: {plural}</p>{#else}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+  <h2>{type.pluralName}</h2>
+  <a href="/cms-admin/content/{plural}/create" class="btn btn-primary">+ New {type.apiName}</a>
+</div>
+<div id="list-container" hx-get="/cms-admin/content/{plural}/table?page={page}&size={size}&sort={sort}&filter={filter}" hx-trigger="load" hx-swap="innerHTML">Loading...</div>
+{/if}
+{/body}
+{/include}

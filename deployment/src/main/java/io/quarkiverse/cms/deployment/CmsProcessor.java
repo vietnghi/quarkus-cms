@@ -12,6 +12,7 @@ import io.quarkiverse.cms.runtime.model.CmsRelation;
 import io.quarkiverse.cms.runtime.model.FieldDefinition;
 import io.quarkiverse.cms.runtime.model.FieldType;
 import io.quarkiverse.cms.runtime.model.SchemaRegistry;
+import io.quarkiverse.cms.runtime.rest.AdminPageResource;
 import io.quarkiverse.cms.runtime.rest.AdminResource;
 import io.quarkiverse.cms.runtime.rest.CodegenResource;
 import io.quarkiverse.cms.runtime.rest.ContentResource;
@@ -77,7 +78,8 @@ public class CmsProcessor {
     AdditionalBeanBuildItem beans() {
         return AdditionalBeanBuildItem.builder()
                 .addBeanClasses(SchemaRegistry.class, CmsEntry.class, CmsRelation.class, CmsRecorder.class,
-                        ContentResource.class, AdminResource.class, CodegenResource.class, GraphQLAdapter.class,
+                        ContentResource.class, AdminResource.class,
+ AdminPageResource.class,CodegenResource.class, GraphQLAdapter.class,
                         LocalStorageProvider.class, MediaResource.class, ThumbnailService.class,
                         RowPolicyEnforcerImpl.class, SecurityContextProducer.class, SecuredDocumentService.class,
                         DefaultTenantResolver.class, WebhookService.class, WorkflowServiceImpl.class)

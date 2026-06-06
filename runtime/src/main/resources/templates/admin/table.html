@@ -1,0 +1,45 @@
+<table>
+<thead><tr>
+  <th>ID</th>
+  {#if type}
+  {#for f in type.fields}<th onclick="hxGet('/cms-admin/content/{plural}/table?sort={f.name}')" style="cursor:pointer">{f.name}</th>{/for}
+  <th>Status</th>
+  {/if}
+  <th>Actions</th>
+</tr></thead>
+<tbody>
+{#if entries}
+{#for entry in entries}
+<tr class="tr" id="row-{entry.id}">
+  <td>{entry.id.substring(0,8)}</td>
+  {#if type}
+  {#for f in type.fields}
+  <td>{entry.data.get(f.name) ?: ''}</td>
+  {/for}
+  <td>
+    {#if type.draftAndPublish}
+    <button class="btn btn-sm" style="background:{entry.status is 'published' ? '#e8f5e9' : '#fff3e0'}"
+      hx-put="/cms-admin/content/{plural}/{entry.id}/publish"
+      hx-vals='{"status":"{entry.status is 'published' ? 'draft' : 'published'}"}'
+      hx-swap="none">{entry.status}</button>
+    {#else}{entry.status}{/if}
+  </td>
+  {/if}
+  <td>
+    <a href="/cms-admin/content/{plural}/{entry.id}/edit" class="btn btn-sm btn-primary">Edit</a>
+    <button class="btn btn-sm btn-danger"
+      hx-delete="/cms-admin/content/{plural}/{entry.id}"
+      hx-confirm="Delete this entry?"
+      hx-target="#row-{entry.id}" hx-swap="outerHTML">Del</button>
+  </td>
+</tr>
+{/for}
+{/if}
+</tbody>
+</table>
+<div style="margin-top:12px">
+  {#if page > 1}<a href="/cms-admin/content/{plural}?page={page - 1}" class="btn btn-sm">← Prev</a>{/if}
+  <span style="margin:0 8px">Page {page} of {totalPages}</span>
+  {#if entries.size == size}<a href="/cms-admin/content/{plural}?page={page + 1}" class="btn btn-sm">Next →</a>{/if}
+  <span style="margin-left:16px">Total: {total}</span>
+</div>
