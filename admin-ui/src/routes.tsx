@@ -1,12 +1,17 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { LoginPage } from "./login";
 import { AdminLayout, ContentList } from "./layout";
+import { ContentForm } from "./content-form";
 
 export const AppRoutes: React.FC = () => (
   <Routes>
+    <Route path="/login" element={<LoginPage />} />
     <Route path="/" element={<AdminLayout />}>
       <Route index element={<Dashboard />} />
       <Route path="content-manager/:plural" element={<ContentList />} />
+      <Route path="content-manager/:plural/create" element={<ContentForm />} />
+      <Route path="content-manager/:plural/edit/:id" element={<ContentForm />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Route>
   </Routes>
