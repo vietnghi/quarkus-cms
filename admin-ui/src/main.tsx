@@ -10,7 +10,7 @@ import { LoginPage } from "./login";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/cms-admin">
       <Refine
         dataProvider={dataProvider}
         authProvider={authProvider()}
